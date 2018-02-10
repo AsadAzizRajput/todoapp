@@ -16,21 +16,65 @@ app.post('/todos',(req,res)=>{
     
     todo.save().then((doc)=>{
         res.send(doc);
-    },(e)=>{
-        res.status(400).send(e);
+    },(err)=>{
+        res.status(400).send(err);
     });
 });
 
 
 app.get('/todos',(req,res)=>{
-    todoModel.find().then((todos)=>{
+    todoModel.findById('5a7df4c47afd3b0a6004823f').then((todos)=>{
             res.send({todos})
-    },(e)=>{
-        res.status(400).send(e);
+    },(err)=>{
+        res.status(400).send(err);
     })
-},(e)=>{
+})
+
+
+app.get('/todos/:id',(req,res)=>{
+    var id = req.params.id;
+    //my code
+    // console.log(mongoose.Types.ObjectId.isValid(id));
+    // if(mongoose.Types.ObjectId.isValid(id))
+    // {
+    //     todoModel.findById(id).then((todo)=>{
+    //             if(!todo){
+    //                 return res.status(400).send({});
+    //             }
+    //             else{
+    //                 return res.send({todo});
+    //             }
+    //     },(err)=>{
+    //         res.status(400).send({})
+    //     })
+    // }
+    // else
+    // {
+    //     res.status(404).send('Your ID might not be correct');
+    // }
+
+    //tutorial code
+
+    if(!mongoose.Types.ObjectId.isValid(id))
+    {
+        res.status(404).send();
+    }
+    todoModel.findById(id).then((todo)=>{
+            if(!todo){
+               return res.status(400).send(); 
+            }
+            res.send({todo});
+    }).catch((err)=>{
+            res.status(400).send({});
+    })
+    
 
 })
+
+
+
+
+// assinging port tp server
 app.listen(3000,()=>{
     console.log("Started on port 3000");
 })
