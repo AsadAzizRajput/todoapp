@@ -7,6 +7,7 @@ var {todoModel} = require('./models/todo');
 var {userModel} = require('./models/user');
 
 var app = express();
+const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 
 app.post('/todos',(req,res)=>{
@@ -75,7 +76,7 @@ app.get('/todos/:id',(req,res)=>{
 
 
 // assinging port tp server
-app.listen(3000,()=>{
-    console.log("Started on port 3000");
+app.listen(port,()=>{
+    console.log(`Started on port ${port}`);
 })
 
