@@ -24,7 +24,7 @@ app.post('/todos',(req,res)=>{
 
 
 app.get('/todos',(req,res)=>{
-    todoModel.findById('5a7df4c47afd3b0a6004823f').then((todos)=>{
+    todoModel.find.then((todos)=>{
             res.send({todos})
     },(err)=>{
         res.status(400).send(err);
