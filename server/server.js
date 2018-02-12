@@ -3,19 +3,19 @@ var bodyParser = require('body-parser');
 
 
 var {mongoose} = require('./db/mongoose');
-var {todoModel} = require('./models/todo');
-var {userModel} = require('./models/user');
+var {todo} = require('./models/todo');
+var {user} = require('./models/user');
 
 var app = express();
 const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 
 app.post('/todos',(req,res)=>{
-    var todo =  todoModel({
+    var todoModel =  todo({
         text:req.body.text
     });
     
-    todo.save().then((doc)=>{
+    todoModel.save().then((doc)=>{
         res.send(doc);
     },(err)=>{
         res.status(400).send(err);
@@ -24,7 +24,8 @@ app.post('/todos',(req,res)=>{
 
 
 app.get('/todos',(req,res)=>{
-    todoModel.find({}).then((todos)=>{
+    
+    todo.find({}).then((todos)=>{
             res.send({todos})
     },(err)=>{
         res.status(400).send(err);
@@ -34,7 +35,51 @@ app.get('/todos',(req,res)=>{
 
 app.get('/todos/:id',(req,res)=>{
     var id = req.params.id;
-    //my code
+    if(!mongoose.Types.ObjectId.isValid(id))
+    {
+        res.status(404).send();
+    }
+    todo.findById(id).then((todo)=>{
+            if(!todo){
+               return res.status(400).send(); 
+            }
+            res.send({todo});
+    }).catch((err)=>{
+            res.status(400).send({});
+    })
+    
+
+})
+
+app.delete('/todos/:id',(req,res)=>{
+    var id = req.params.id;
+    console.log(id);
+    if(!mongoose.Types.ObjectId.isValid(id))
+    {
+        res.status(404).send();
+    }
+    todo.findByIdAndRemove(id).then((todo)=>{
+        if(!todo || null)
+        {
+            return res.status(404).send();
+        }
+        res.status(200).send({todo});
+    }).catch((err)=>{
+        res.send(400).send({})
+    })
+    
+})
+
+
+
+
+
+// assinging port tp server
+app.listen(port,()=>{
+    console.log(`Started on port ${port}`);
+})
+
+//my code
     // console.log(mongoose.Types.ObjectId.isValid(id));
     // if(mongoose.Types.ObjectId.isValid(id))
     // {
@@ -53,30 +98,3 @@ app.get('/todos/:id',(req,res)=>{
     // {
     //     res.status(404).send('Your ID might not be correct');
     // }
-
-    //tutorial code
-
-    if(!mongoose.Types.ObjectId.isValid(id))
-    {
-        res.status(404).send();
-    }
-    todoModel.findById(id).then((todo)=>{
-            if(!todo){
-               return res.status(400).send(); 
-            }
-            res.send({todo});
-    }).catch((err)=>{
-            res.status(400).send({});
-    })
-    
-
-})
-
-
-
-
-// assinging port tp server
-app.listen(port,()=>{
-    console.log(`Started on port ${port}`);
-})
-
