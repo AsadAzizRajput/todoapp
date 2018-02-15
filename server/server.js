@@ -95,7 +95,21 @@ app.patch('/todos/:id',(req,res)=>{
      })
 })
 
+app.post('/users',(req,res)=>{
 
+       var body = _.pick(req.body,['email','password']);
+       var User = new user(body);
+
+       User.save().then(()=>{
+        return User.generateAuthToken();
+       }).then((token)=>{
+        res.header('x-auth',token).send(User);
+        console.log('Here in token Header Clause');
+       }).catch((err)=>{
+        res.status(400).send(err);
+        console.log('Here in error Clause',err);
+       })
+})
 
 
 
@@ -104,22 +118,4 @@ app.listen(port,()=>{
     console.log(`Started on port ${port}`);
 })
 
-//my code
-    // console.log(mongoose.Types.ObjectId.isValid(id));
-    // if(mongoose.Types.ObjectId.isValid(id))
-    // {
-    //     todoModel.findById(id).then((todo)=>{
-    //             if(!todo){
-    //                 return res.status(400).send({});
-    //             }
-    //             else{
-    //                 return res.send({todo});
-    //             }
-    //     },(err)=>{
-    //         res.status(400).send({})
-    //     })
-    // }
-    // else
-    // {
-    //     res.status(404).send('Your ID might not be correct');
-    // }
+ 
